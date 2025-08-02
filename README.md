@@ -35,6 +35,9 @@ This page is used for critical activities where the system assumes a request is 
 * **User Instructions:** The page will display the activity details and a single **Report Suspicious** button.  
   * **If they performed the activity:** No action is needed on their part; they can simply close the page.  
   * **If they did NOT perform the activity:** **They should click the Report Suspicious button immediately.** This creates a security incident and can perform other automated actions such as suspending accounts.
+ 
+    <img width="626" height="680" alt="image" src="https://github.com/user-attachments/assets/87ad3f39-b07c-49a6-96ec-fb9b02520a04" />
+
 
 ### **b. "Confirm or Report Suspicious" Page**
 
@@ -44,6 +47,9 @@ This page is used for other types of activities where the system requires explic
 * **User Instructions:** The page will display the activity details and two buttons: **Confirm** and **Report Suspicious**.  
   * **If they performed the activity:** They should click the **Confirm** button to authorize the change. No further action is taken.  
   * **If they did NOT perform the activity:** They **should click the Report Suspicious button.** This creates a security incident and performs other changes such as restricting network access to the device.
+ 
+    <img width="667" height="805" alt="image" src="https://github.com/user-attachments/assets/b4924fc8-9b2e-4e26-af53-c10aa6fcead8" />
+
 
 ## **5\. Support**
 
