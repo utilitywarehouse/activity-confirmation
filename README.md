@@ -15,6 +15,22 @@ The process is designed to be simple and straightforward:
 3. **Review & Action:** They click the link to open a dedicated confirmation page. The content of this page depends on the type of activity.  
 4. **System Response:** Based on their action (Confirm or Report Suspicious), the system either logs the activity as a confirmed action or immediately raises a security incident and triggers automated responses.
 
+```mermaid
+flowchart TD
+    A[Suspicious activity occcurs] --> B(Create entry in confirm_activity table)
+    B --> C{Which notification method was requested?}
+    C --> D[Slack]
+    C --> E[Google Chat]
+    C --> F[Personal]
+    D --> G[User clicks link in message]
+    E --> G
+    F --> G
+    G --> H[User is shown confirm.html page and, depending on request, asked to confirm activity or just report as suspicious if nescessary]
+    H --> I{Reported as suspicious?}
+    I --> | Yes | J[Update table and create or update incident ticket]
+    I --> | No | K[Update table]
+```
+
 ## **3\. Dependencies**
 
 The Activity Confirmation service relies on the following key platforms and integrations:
