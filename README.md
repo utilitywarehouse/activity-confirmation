@@ -25,10 +25,12 @@ flowchart TD
     D --> G[User clicks link in message]
     E --> G
     F --> G
-    G --> H[User is shown confirm.html page and, depending on request, asked to confirm activity or just report as suspicious if nescessary]
-    H --> I{Reported as suspicious?}
-    I --> | Yes | J[Update table and create or update incident ticket]
-    I --> | No | K[Update table]
+    G --> H[User is shown confirm.html page]
+    H --> I{Activity confirmation required?}
+    I --> | Yes | J[Display Confirm button and send user to IDP to confirm activity if clicked, as well as show Report suspicious button.]
+    I --> | No | K[Only show Report Suspicious button]
+    J -->  L[Update table]
+    K -->  L[Update table]
 ```
 
 ## **3\. Dependencies**
