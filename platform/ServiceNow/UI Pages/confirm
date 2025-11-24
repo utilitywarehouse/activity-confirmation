@@ -1,0 +1,161 @@
+<j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide">
+    <g:evaluate>
+        var activityID = RP.getParameterValue('id');
+
+        <!-- create csrf token to make sure api calls are made from this page -->
+        var csrfToken = GlideSecureRandomUtil.getSecureRandomString(50);
+        var session = gs.getSession();
+        session.putClientData('confirm_activity_csrf_token', csrfToken);
+
+        var activity = new GlideRecord('u_confirm_activity');
+        var found = activity.get("sys_id",activityID);
+
+        var currentTime = new GlideDateTime();
+        var expireAt = new GlideDateTime(activity.u_confirmation_expire_at);
+        var hideActivity = !found || activity.u_response_outcome != '' || (expireAt ${AND} currentTime.after(expireAt))
+
+    </g:evaluate>
+
+    <div>
+        <style>
+            .container {
+                background-color: white;
+                border: 1px solid;
+                border-color: #ddd;
+                border-radius: 8px;
+                max-width: 500px;
+                margin: auto;
+            }
+
+            .report-header {
+                border-bottom: 1px solid #ddd;
+                padding: 25px 90px;
+            }
+
+
+            .logo {
+                display: block;
+                margin: 0 auto;
+                max-height: 40px;
+                max-width: 200px;
+            }
+
+            .report-content {
+                padding: 10px;
+            }
+
+            .detail-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 10px;
+                font-size: medium;
+            }
+
+            .detail-table th {
+                text-align: left;
+                padding: 8px;
+                border-bottom: 1px solid #ddd;
+            }
+
+            .detail-table td {
+                padding: 8px;
+                border-bottom: 1px solid #ddd;
+            }
+
+            .uw-button-no {
+                color: #F25192;
+            }
+
+            .uw-button-yes {
+                color: #62DD99;
+            }
+
+            .uw-button {
+                background-color: white;
+                border: 1px solid;
+                border-radius: 3px;
+                font-weight: bold;
+                font-size: large;
+                height: 50px;
+                margin-top: 10px;
+            }
+
+            .uw-button:hover {
+                box-shadow: rgba(0, 0, 0, 0.2) 0 1px 3px;
+            }
+        </style>
+
+        <div class="container">
+            <div class="report-header">
+                <img class="logo" src="<company logo url>" alt="<alt text for company logo>" />
+            </div>
+
+            <div class="report-content">
+                <h3 style="text-align: center; color: #550091; margin-top: 10px; margin-bottom: 20px;">Activity Confirmation</h3>
+
+                <j:if test="${!hideActivity}">
+                    <p id="activity-description" class="text-recommend" style="font-size: large;">
+                        ${activity.u_activity_description}
+                    </p>
+                    <div id="activity-details">
+                        <h4 style="margin-top:20px;">Details</h4>
+                        <table class="detail-table">
+                            <tr>
+                                <th>Activity</th>
+                                <td>${activity.u_activity_name}</td>
+                            </tr>
+                            <tr>
+                                <th>Impacted asset</th>
+                                <td>${activity.u_impacted_asset}</td>
+                            </tr>
+                            <tr>
+                                <th>Activity by</th>
+                                <td>${activity.u_actor}</td>
+                            </tr>
+                            <tr>
+                                <th>Time of activity</th>
+                                <td>${activity.u_activity_recorded_at}</td>
+                            </tr>
+							<j:if test="${expireAt != ''}">
+                            <tr>
+                                <th>Time remaining to report activity</th>
+                                <td>${GlideDateTime.subtract(currentTime,expireAt).getDisplayValue()}</td>
+                            </tr></j:if>
+                            <tr>
+                                <th>Sent to</th>
+                                <td>${activity.u_recipient_displayname}</td>
+                            </tr>
+                        </table>
+
+                        <p id="activity-msg" class="text-recommend" style="font-size: medium;">
+                            <j:if test="${activity.u_confirmation_needed}">
+                                If you have performed this activity, please confirm it. </j:if>
+                            If you don't recognise this activity, please report it as suspicious.
+                        </p>
+                    </div>
+
+                    <j:if test="${activity.u_confirmation_needed}">
+                        <form action="api/utw/confirm_activity/oidc-login" method="POST" style="display: inline-block; margin-right:10px">
+                            <input type="hidden" name="csrfToken" value="${csrfToken}" />
+                            <input type="hidden" name="activityID" value="${activityID}" />
+                            <input class="uw-button uw-button-yes" type="submit" value="Confirm" />
+                        </form>
+                    </j:if>
+
+                    <form action="api/utw/confirm_activity/suspicious" method="POST" style="display: inline-block;">
+                        <input type="hidden" name="csrfToken" value="${csrfToken}" />
+                        <input type="hidden" name="activityID" value="${activityID}" />
+                        <input class="uw-button uw-button-no" type="submit" value="Report Suspicious" />
+                    </form>
+                </j:if>
+
+                <j:if test="${hideActivity}">
+                    <p id="activity-msg" class="text-recommend">
+                        No futher action required. Call <Service desk phone number> to get help if needed.
+                    </p>
+                </j:if>
+
+            </div>
+        </div>
+    </div>
+</j:jelly>
